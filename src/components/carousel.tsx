@@ -2,11 +2,10 @@ import {
   motion, 
   useMotionValue, 
   useSpring, 
-  useTransform, 
-  MotionValue,
   PanInfo 
 } from "framer-motion";
 import React, { FC, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // Use useNavigate for navigation
 import "./carousel.css";
 
 interface Character {
@@ -19,7 +18,8 @@ interface CarouselProps {
   characters: Character[];
 }
 
-const Carousel: FC<CarouselProps> = ({ characters }) => {
+const Carousel: React.FC<CarouselProps> = ({ characters }) => {
+  const navigate = useNavigate(); // Initialize navigate for navigation
   const x = useMotionValue(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const baseVelocity = -0.07;
@@ -31,29 +31,49 @@ const Carousel: FC<CarouselProps> = ({ characters }) => {
 
   useEffect(() => {
     let timeoutId: number;
-    
+
     function update() {
       const currentX = x.get();
       const moveBy = baseVelocity * 15;
-      
-      // Calculate the width of all slides
       const containerWidth = containerRef.current?.scrollWidth || 0;
-      const viewportWidth = containerRef.current?.offsetWidth || 0;
-      
-      // Reset position when reaching the end
+
       if (currentX <= -containerWidth / 2) {
         x.set(0);
       } else {
         x.set(currentX + moveBy);
       }
-      
+
       timeoutId = requestAnimationFrame(update);
     }
-    
+
     update();
-    
+
     return () => cancelAnimationFrame(timeoutId);
   }, [baseVelocity, x]);
+
+  const CharacterCard: React.FC<{ character: Character }> = ({ character }) => {
+    const handleImageClick = () => {
+      console.log(`Navigating to mentor with ID: ${character.id}`);
+      navigate(`/mentor/${character.id}`);
+      console.log("Navigation executed");
+    };
+
+    return (
+      <motion.div
+        className="carousel-slide"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={handleImageClick} // Handle click
+      >
+        <img
+          src={character.image}
+          alt={character.name}
+          className="character-image"
+          draggable="false"
+        />
+      </motion.div>
+    );
+  };
 
   return (
     <div className="carousel-root">
@@ -73,32 +93,18 @@ const Carousel: FC<CarouselProps> = ({ characters }) => {
           className="carousel-track"
           style={{ x }}
           drag="x"
-          dragConstraints={{
-            left: -1000,
-            right: 1000
-          }}
+          dragConstraints={{ left: -1000, right: 1000 }}
           onDragStart={() => smoothVelocity.set(0)}
-          onDrag={(_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+          onDrag={(e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
             smoothVelocity.set(info.velocity.x);
           }}
           onDragEnd={() => {
             smoothVelocity.set(baseVelocity * 15);
           }}
         >
+          {/* Use CharacterCard component to render each character */}
           {[...characters, ...characters, ...characters].map((character, index) => (
-            <motion.div
-              key={`${character.id}-${index}`}
-              className="carousel-slide"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <img
-                src={character.image}
-                alt={character.name}
-                className="character-image"
-                draggable="false"
-              />
-            </motion.div>
+            <CharacterCard key={`${character.id}-${index}`} character={character} />
           ))}
         </motion.div>
       </div>
@@ -125,3 +131,5 @@ const Carousel: FC<CarouselProps> = ({ characters }) => {
 };
 
 export default Carousel;
+
+
