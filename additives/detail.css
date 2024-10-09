@@ -1,0 +1,235 @@
+.page-container{
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #1a2416, #2a3426);
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+.page-container {
+  animation: pageEntry 0.8s ease-out forwards;
+}
+@keyframes pageEntry {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.not-found {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000;
+    color: white;
+  }
+  
+  .navigation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 1.5rem;
+    z-index: 10;
+  }
+  
+  .home-link {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-size: 1rem;
+  }
+  
+  .home-link:hover {
+    color: white;
+  }
+  
+  .main-content {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    perspective: 1000px;
+  }
+  
+  .content-grid {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    animation: contentEntry 1s ease-out forwards;
+  }
+  @keyframes contentEntry {
+    from {
+      opacity: 0;
+      transform: rotateY(-20deg) translateZ(-100px);
+    }
+    to {
+      opacity: 1;
+      transform: rotateY(0) translateZ(0);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .content-grid {
+      grid-template-columns: repeat(2, 1fr);
+      align-items: center;
+      padding: 4rem;
+    }
+  }
+  
+  .image-container {
+    position: relative;
+    width: 100%;
+    transform-style: preserve-3d;
+    animation: imageEntry 1s ease-out forwards;
+  }
+  @keyframes imageEntry {
+    from {
+      opacity: 0;
+      transform: rotateY(-30deg) translateZ(-200px);
+    }
+    to {
+      opacity: 1;
+      transform: rotateY(0) translateZ(0);
+    }
+  }
+  .mentor-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 4px;
+    transition: transform 0.5 ease;
+  }
+  .mentor-image:hover {
+    transform: scale(1.02);
+  }
+  .content-grid.transitioning {
+    animation: wheelRotation 0.8s ease-in-out;
+  }
+  
+  @keyframes wheelRotation {
+    0% {
+      transform: rotateY(0deg);
+    }
+    100% {
+      transform: rotateY(360deg);
+    }
+  }
+  .close-button {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 20;
+  }
+  
+  .close-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(-50%) scale(1.1);
+  }
+  
+  .content-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 600px;
+    animation: textEntry 1s ease-out forwards;
+    animation-delay: 0.3s;
+    opacity: 0;
+  }
+  @keyframes textEntry {
+    from {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  .red-line {
+    width: 8rem;
+    height: 2px;
+    background-color: #dc2626;
+    margin-bottom: 1rem;
+    transform-origin: left;
+    animation: lineGrow 0.6s ease-out forwards;
+    animation-delay: 0.6s;
+    transform: scaleX(0);
+  }
+  @keyframes lineGrow {
+    to {
+      transform: scaleX(1);
+    }
+  }
+  .category-title {
+    font-size: 1.125rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  
+  .mentor-name {
+    font-size: 3.75rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1;
+    text-transform: uppercase;
+    margin: 1rem 0 2rem;
+  }
+  
+  .mentor-description {
+    font-size: 1.125rem;
+    color: #d1d5db;
+    line-height: 1.75;
+    max-width: 36rem;
+  }
+  
+  .social-links {
+    display: flex;
+    gap: 1.5rem;
+    padding-top: 2rem;
+  }
+  
+  .social-link {
+    color: rgba(255, 255, 255, 0.6);
+    transition: color 0.3s ease;
+  }
+  
+  .social-link:hover {
+    color: white;
+  }
+  
+  .footer {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+  @media (max-width: 768px) {
+    .mentor-name {
+      font-size: 3.5rem;
+    }
+  
+    .content-grid {
+      padding: 1.5rem;
+      gap: 2rem;
+    }
+  }

@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Carousel from "./components/carousel";
-import MentorDetails from "./components/mentorDetail";
 import Image3 from "./image/c.jpg";
 import Image2 from "./image/b.jpg";
 import Image1 from "./image/a.jpg";
+import MentorDetails from "./components/mentorDetail";
 
 // Define the Character interface
 export interface Character {
