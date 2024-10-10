@@ -1,156 +1,131 @@
-import React, { useEffect, useRef, useState } from "react";
-import "./mentorDetail.css";
+import React, { useEffect, useRef } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { X, Twitter, Github, Linkedin } from 'lucide-react';
 import Image3 from "../image/c.jpg";
 import Image2 from "../image/b.jpg";
 import Image1 from "../image/a.jpg";
+import "./mentorDetail.css";
 
-interface Mentor {
+interface Character {
+  id: number;
   name: string;
-  specialty: string;
-  description: string;
   image: string;
+  category: string;
+  description: string;
 }
 
-const mentors: Mentor[] = [
-  {
-    name: "John Doe",
-    specialty: "Web Development",
-    description: "Expert in full-stack web development.",
-    image: "https://via.placeholder.com/150", // replace with actual image URL
-  },
-  {
-    name: "Jane Smith",
-    specialty: "Data Science",
-    description: "Specializes in machine learning and data analysis.",
-    image: "https://via.placeholder.com/150", // replace with actual image URL
-  },
-  // Add more mentors as needed
-];
-
 const MentorDetails: React.FC = () => {
-  const [loading, setLoading] = useState(true);
-  const [activeMentor, setActiveMentor] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const mainRef = useRef<HTMLDivElement>(null);
-  const parallaxRef = useRef<HTMLDivElement>(null);
+  const { id } = useParams<{ id: string }>();
+
+  const characters: Character[] = [
+    {
+      id: 1,
+      name: "JANE DOE",
+      image: Image1,
+      category: "MENTOR",
+      description: "Senior software engineer with over 10 years of experience in full-stack development. Specializing in React, Node.js, and cloud architecture. Known for mentoring junior developers and leading technical teams through complex projects."
+    },
+    {
+      id: 2,
+      name: "JANE DOE",
+      image: Image2,
+      category: "MENTOR",
+      description: "Senior software engineer with over 10 years of experience in full-stack development. Specializing in React, Node.js, and cloud architecture. Known for mentoring junior developers and leading technical teams through complex projects."
+    },
+    {
+      id: 3,
+      name: "JANE DOE",
+      image: Image3,
+      category: "MENTOR",
+      description: "Senior software engineer with over 10 years of experience in full-stack development. Specializing in React, Node.js, and cloud architecture. Known for mentoring junior developers and leading technical teams through complex projects."
+    }
+  ];
+
+  const mentor = id ? characters.find(char => char.id === Number(id)) : null;
+
+  // Use ref and effect for handling wheel scroll transition
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000);
-
-    const handleScroll = () => {
-      if (parallaxRef.current) {
-        const scrolled = window.pageYOffset;
-        parallaxRef.current.style.transform = `translateY(${scrolled * 0.5}px)`;
+    const handleWheel = (e: WheelEvent) => {
+      if (contentRef.current) {
+        contentRef.current.classList.add('transitioning');
+        setTimeout(() => {
+          contentRef.current?.classList.remove('transitioning');
+        }, 800);
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('scroll', handleScroll);
-    };
+    window.addEventListener('wheel', handleWheel);
+    return () => window.removeEventListener('wheel', handleWheel);
   }, []);
 
-  const handleMentorTransition = (index: number) => {
-    if (isTransitioning) return;
-
-    setIsTransitioning(true);
-    const currentMentor = document.querySelector('.mentor-item.visible');
-    currentMentor?.classList.remove('visible');
-
-    setTimeout(() => {
-      setActiveMentor(index);
-      const nextMentor = document.querySelectorAll('.mentor-item')[index];
-      nextMentor?.classList.add('visible');
-      setIsTransitioning(false);
-    }, 500);
-  };
-
-  const nextMentor = () => {
-    const nextIndex = (activeMentor + 1) % mentors.length;
-    handleMentorTransition(nextIndex);
-  };
-
-  const prevMentor = () => {
-    const prevIndex = (activeMentor - 1 + mentors.length) % mentors.length;
-    handleMentorTransition(prevIndex);
-  };
-
-  if (loading) {
+  if (!mentor) {
     return (
-      <div className="loading-screen">
-        <div className="loading-bar">
-          <div className="loading-progress"></div>
-        </div>
-        <div className="loading-text">Loading amazing mentors...</div>
+      <div className="not-found">
+        <p>Mentor not found</p>
       </div>
     );
   }
 
   return (
-    <div className="main" ref={mainRef}>
-      <div className="gradient-background"></div>
-      <div className="parallax-overlay" ref={parallaxRef}></div>
-
+    <div className="page-container">
       <nav className="navigation">
-        <a href="/" className="home-link">
-          <span className="link-text">Home</span>
-          <span className="link-underline"></span>
-        </a>
-        <h1 className="logo">Mojomentors</h1>
+        <Link to="/" className="home-link">
+          Home
+        </Link>
       </nav>
 
-      <div className="content">
-        <div className="mentor-grid">
-          {mentors.map((mentor, index) => (
-            <div 
-              key={index} 
-              className={`mentor-item ${index === activeMentor ? 'visible' : ''}`}
+      <div className="main-content">
+        <div ref={contentRef} className="content-grid">
+          <div className="image-container">
+            <img
+              src={mentor.image}
+              alt={mentor.name}
+              className="mentor-image"
+            />
+            <button
+              type="button"
+              className="close-button"
+              title="Close"
+              aria-label="Close"
             >
-              <div className="mentor-image-container">
-                <div 
-                  className="mentor-image"
-                  style={{ backgroundImage: `url(${mentor.image})` }}
-                >
-                  <div className="image-overlay"></div>
-                </div>
-              </div>
-              <div className="mentor-info">
-                <div className="info-content">
-                  <span className="specialty">{mentor.specialty}</span>
-                  <h2 className="name">{mentor.name}</h2>
-                  <p className="description">{mentor.description}</p>
-                  <button className="contact-button">Contact Mentor</button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              <X size={24} />
+            </button>
+          </div>
 
-        <div className="mobile-carousel">
-          <button className="carousel-button" onClick={prevMentor}>←</button>
-          <div className="carousel-content">
-            <div 
-              className="carousel-track"
-              style={{ transform: `translateX(-${activeMentor * 100}%)` }}
-            >
-              {mentors.map((mentor, index) => (
-                <div key={index} className="carousel-item">
-                  <div 
-                    className="carousel-image"
-                    style={{ backgroundImage: `url(${mentor.image})` }}
-                  ></div>
-                  <div className="carousel-info">
-                    <h3>{mentor.name}</h3>
-                    <p>{mentor.specialty}</p>
-                  </div>
-                </div>
-              ))}
+          <div className="content-section">
+            <div className="red-line"></div>
+            
+            <h2 className="category-title">
+              {mentor.category}
+            </h2>
+
+            <h1 className="mentor-name">
+              {mentor.name}
+            </h1>
+
+            <p className="mentor-description">
+              {mentor.description}
+            </p>
+
+            <div className="social-links">
+              <a href="#" className="social-link">
+                <Twitter size={24} />
+              </a>
+              <a href="#" className="social-link">
+                <Github size={24} />
+              </a>
+              <a href="#" className="social-link">
+                <Linkedin size={24} />
+              </a>
             </div>
           </div>
-          <button className="carousel-button" onClick={nextMentor}>→</button>
         </div>
+      </div>
+
+      <div className="footer">
+        Portfolio 2024 - React | TypeScript | Tailwind
       </div>
     </div>
   );
