@@ -1,31 +1,276 @@
-/*On the second page of Michal Zalobny's website, which appears after clicking on an image, the design and animation effects are focused on giving an interactive, dynamic experience. Here’s a breakdown of the key elements and effects:
-
-1. Smooth Transition from First Page
-Upon clicking an image, there's typically a smooth transition or fade-out/fade-in effect. This ensures that the user’s shift from the hero page to the detail page feels fluid and polished, rather than abrupt.
-The selected image or character often zooms, rotates, or fades in, directing attention to it while the rest of the content follows.
-2. Rotating Image or Carousel Animation
-One of the most notable effects on the second page is a rotating image wheel or carousel. This component dynamically presents various profiles or images.
-As users interact with the carousel (or hover), the images often rotate in a circular or 3D manner. The rotation provides a continuous, smooth flow, mimicking a spinning wheel.
-Each image is clickable, and as the user hovers or clicks, the rotation may slow down or adjust to emphasize that selection.
-3. 3D Depth and Perspective
-The second page utilizes 3D depth and perspective effects, where the images might appear to recede or pop out from the screen depending on the angle of interaction.
-This is enhanced by lighting effects, shadows, and dynamic resizing, giving the page a more immersive, layered appearance.
-4. Text Reveal and Parallax
-When the user navigates to this second page, there’s a text reveal animation. This could involve lines of text sliding in from the sides or fading into view, paired with subtle animations that help keep the focus on the written content.
-A parallax effect might also be used on the background or layered elements. As the user scrolls, the different layers move at varying speeds, adding depth to the page.
-5. Hover and Focus Effects on Text
-The mentor or character details (names, titles) are displayed in a stylized manner, often accompanied by effects like underline animations or color changes when the user hovers over the text.
-On hover, the text might also slightly shift in size or weight, reinforcing interaction.
-6. Background Animations
-There’s usually a gradual animation in the background that changes slightly based on the interactions on the page. This can include gradients, color shifts, or subtle movements, creating a dynamic visual effect.
-7. Interactive Buttons and Links
-On the detail page, the call-to-action buttons or links (such as back or next) are interactive. When hovered over, these buttons could have a color change, shadow, or underline animation, making the interaction clear and engaging.
-8. Smooth Scrolling and Delayed Animations
-Smooth scrolling ensures the transitions between different sections of the page are fluid. As users scroll, animations might be delayed slightly, revealing elements just as they enter the viewport, creating a more cinematic experience.
-9. Interactive Profile Information
-The mentor or character information is typically presented in a structured, interactive format. When scrolling, sections like bio, name, and other details animate in, either by sliding or fading, giving the page a sense of motion and engagement.
-Images or icons associated with each mentor might rotate or change as the user interacts with different parts of the page.
-10. Subtle Motion and Layering
-Overall, the second page focuses on subtle motion, ensuring the user’s attention is directed smoothly across various elements (like images, text, and buttons).
-Layering effects ensure that some parts of the page, like the background, remain static, while other elements move or react to user interaction, creating depth and richness.
-The goal of this second page is to maintain the high level of interactivity and dynamic design seen in the first, while focusing more on the content details (profiles, information, etc.) in a visually engaging manner.*/
+/* mentorDetail.css */
+.main {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a237e 0%, #000428 100%);
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .gradient-background {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #1a237e 0%, #000428 100%);
+    opacity: 0.8;
+  }
+  
+  .parallax-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent, rgba(0, 0, 0, 0.5));
+    pointer-events: none;
+  }
+  
+  .navigation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .home-link {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .link-text {
+    transition: color 0.3s ease;
+  }
+  
+  .link-underline {
+    width: 0;
+    height: 2px;
+    background-color: white;
+    transition: width 0.3s ease;
+  }
+  
+  .home-link:hover .link-text {
+    color: white;
+  }
+  
+  .home-link:hover .link-underline {
+    width: 100%;
+  }
+  
+  .logo {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    margin: 0;
+  }
+  
+  .content {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+  
+  .mentor-grid {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+  }
+  
+  .mentor-item {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+  
+  .mentor-item.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .mentor-image-container {
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .mentor-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.1);
+    transition: transform 0.5s ease;
+  }
+  
+  .mentor-item:hover .mentor-image {
+    transform: scale(1.2);
+  }
+  
+  .image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.3));
+  }
+  
+  .mentor-info {
+    width: 50%;
+    padding: 5% 5% 5% 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .specialty {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    position: relative;
+    padding-top: 20px;
+    display: block;
+  }
+  
+  .specialty::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background-color: #ff0000;
+  }
+  
+  .name {
+    font-size: 120px;
+    font-weight: 800;
+    line-height: 1;
+    margin: 0 0 30px;
+    text-transform: uppercase;
+  }
+  
+  .description {
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 40px;
+  }
+  
+  .contact-button {
+    padding: 15px 30px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 30px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .contact-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+  }
+  
+  .mobile-carousel {
+    display: none;
+  }
+  
+  /* Loading Screen */
+  .loading-screen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #1a237e 0%, #000428 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .loading-bar {
+    width: 200px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+  }
+  
+  .loading-progress {
+    height: 100%;
+    background: white;
+    animation: loading 2s ease;
+  }
+  
+  .loading-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+  }
+  
+  @keyframes loading {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  
+  @media (max-width: 1024px) {
+    .name {
+      font-size: 80px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .mentor-grid {
+      display: none;
+    }
+  
+    .mobile-carousel {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+    }
+  
+    .carousel-content {
+      overflow: hidden;
+      width: 100%;
+    }
+  
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s ease;
+    }
+  
+    .carousel-item {
+      min-width: 100%;
+      padding: 20px;
+    }
+  
+    .carousel-image {
+      width: 100%;
+      height: 300px;
+      background-size: cover;
+      background-position: center;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+  
+    .carousel-button {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+  
+    .carousel-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }

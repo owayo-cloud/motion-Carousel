@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
+import "./mentorDetail.css";
 import Image3 from "../image/c.jpg";
 import Image2 from "../image/b.jpg";
 import Image1 from "../image/a.jpg";
-import "./mentorDetail.css";
 
 interface Mentor {
   name: string;
@@ -15,57 +15,28 @@ const mentors: Mentor[] = [
   {
     name: "John Doe",
     specialty: "Web Development",
-    description: "Expert in full-stack development with 10 years of experience in building scalable applications.",
-    image: Image1
+    description: "Expert in full-stack web development.",
+    image: "https://via.placeholder.com/150", // replace with actual image URL
   },
   {
     name: "Jane Smith",
-    specialty: "UI/UX Design",
-    description: "Creative designer with a passion for crafting intuitive user experiences.",
-    image: Image2
+    specialty: "Data Science",
+    description: "Specializes in machine learning and data analysis.",
+    image: "https://via.placeholder.com/150", // replace with actual image URL
   },
-  {
-    name: "Mike Johnson",
-    specialty: "Mobile Development",
-    description: "Specialized in creating native mobile applications for iOS and Android platforms.",
-    image: Image3
-  },
-  {
-    name: "Sarah Wilson",
-    specialty: "Cloud Architecture",
-    description: "Expert in designing and implementing scalable cloud solutions.",
-    image: Image2
-  }
+  // Add more mentors as needed
 ];
 
 const MentorDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeMentor, setActiveMentor] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const mainRef = useRef<HTMLDivElement>(null);
   const parallaxRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
-    // Simulate loading
     const timer = setTimeout(() => setLoading(false), 2000);
 
-    // Intersection Observer for scroll animations
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    document.querySelectorAll('.mentor-item').forEach((item) => {
-      observerRef.current?.observe(item);
-    });
-
-    // Parallax effect
     const handleScroll = () => {
       if (parallaxRef.current) {
         const scrolled = window.pageYOffset;
@@ -78,16 +49,32 @@ const MentorDetails: React.FC = () => {
     return () => {
       clearTimeout(timer);
       window.removeEventListener('scroll', handleScroll);
-      observerRef.current?.disconnect();
     };
   }, []);
 
+  const handleMentorTransition = (index: number) => {
+    if (isTransitioning) return;
+
+    setIsTransitioning(true);
+    const currentMentor = document.querySelector('.mentor-item.visible');
+    currentMentor?.classList.remove('visible');
+
+    setTimeout(() => {
+      setActiveMentor(index);
+      const nextMentor = document.querySelectorAll('.mentor-item')[index];
+      nextMentor?.classList.add('visible');
+      setIsTransitioning(false);
+    }, 500);
+  };
+
   const nextMentor = () => {
-    setActiveIndex((prev) => (prev + 1) % mentors.length);
+    const nextIndex = (activeMentor + 1) % mentors.length;
+    handleMentorTransition(nextIndex);
   };
 
   const prevMentor = () => {
-    setActiveIndex((prev) => (prev - 1 + mentors.length) % mentors.length);
+    const prevIndex = (activeMentor - 1 + mentors.length) % mentors.length;
+    handleMentorTransition(prevIndex);
   };
 
   if (loading) {
@@ -114,15 +101,13 @@ const MentorDetails: React.FC = () => {
         <h1 className="logo">Mojomentors</h1>
       </nav>
 
-      <div className="hero-section">
-        <h1 className="hero-title">Meet Our Expert Mentors</h1>
-        <p className="hero-subtitle">Learn from the best in the industry</p>
-      </div>
-
       <div className="content">
         <div className="mentor-grid">
           {mentors.map((mentor, index) => (
-            <div key={index} className="mentor-item">
+            <div 
+              key={index} 
+              className={`mentor-item ${index === activeMentor ? 'visible' : ''}`}
+            >
               <div className="mentor-image-container">
                 <div 
                   className="mentor-image"
@@ -142,30 +127,30 @@ const MentorDetails: React.FC = () => {
             </div>
           ))}
         </div>
-      </div>
 
-      <div className="mobile-carousel">
-        <button className="carousel-button prev" onClick={prevMentor}>←</button>
-        <div className="carousel-content">
-          <div 
-            className="carousel-track"
-            style={{ transform: `translateX(-${activeIndex * 100}%)` }}
-          >
-            {mentors.map((mentor, index) => (
-              <div key={index} className="carousel-item">
-                <div 
-                  className="carousel-image"
-                  style={{ backgroundImage: `url(${mentor.image})` }}
-                ></div>
-                <div className="carousel-info">
-                  <h3>{mentor.name}</h3>
-                  <p>{mentor.specialty}</p>
+        <div className="mobile-carousel">
+          <button className="carousel-button" onClick={prevMentor}>←</button>
+          <div className="carousel-content">
+            <div 
+              className="carousel-track"
+              style={{ transform: `translateX(-${activeMentor * 100}%)` }}
+            >
+              {mentors.map((mentor, index) => (
+                <div key={index} className="carousel-item">
+                  <div 
+                    className="carousel-image"
+                    style={{ backgroundImage: `url(${mentor.image})` }}
+                  ></div>
+                  <div className="carousel-info">
+                    <h3>{mentor.name}</h3>
+                    <p>{mentor.specialty}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+          <button className="carousel-button" onClick={nextMentor}>→</button>
         </div>
-        <button className="carousel-button next" onClick={nextMentor}>→</button>
       </div>
     </div>
   );
