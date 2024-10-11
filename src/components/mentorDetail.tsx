@@ -1,134 +1,238 @@
-import React, { useEffect, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { X, Twitter, Github, Linkedin } from 'lucide-react';
-import Image3 from "../image/c.jpg";
-import Image2 from "../image/b.jpg";
-import Image1 from "../image/a.jpg";
-import "./mentorDetail.css";
+import React, { Component } from "react";
+import Carousel from "react-spring-3d-carousel";
+import { v4 as uuidv4 } from "uuid";
+import { config } from "react-spring";
+import { title } from "process";
 
-interface Character {
-  id: number;
-  name: string;
-  image: string;
-  category: string;
-  description: string;
+interface State{
+  goTOSlide:number;
+  offsetRadius:number;
+  showNavigation: boolean;
+  enableSwipe: boolean;
+  config: any;
+  xDown: number | null;
+  yDown: number | null;
 }
+const getTouches = (evt: TouchEvent): TouchList => {
+  return evt.touches || (evt as any).originalEvent.touches
+};
 
-const MentorDetails: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+export default class Example extends Component {
+  state = {
+    goToSlide: 0,
+    offsetRadius: 2,
+    showNavigation: true,
+    enableSwipe: true,
+    config: config.gentle,
+    xDown: 0,
+    yDown: 0,
+    slideDetails:[
+      { title: "Image 1", description: "First Description"},
+      { title: "Image 2", description: "Second Description"},
+      { title: "Image 3", description: "Third Description"},
+      { title: "Image 4", description: "Fourth Description"},
+      { title: "Image 5", description: "Last Description"},
+    ],
+  };
 
-  const characters: Character[] = [
+  slides = [
     {
-      id: 1,
-      name: "JANE DOE",
-      image: Image1,
-      category: "MENTOR",
-      description: "Senior software engineer with over 10 years of experience in full-stack development. Specializing in React, Node.js, and cloud architecture. Known for mentoring junior developers and leading technical teams through complex projects."
+      key: uuidv4(),
+      content: <img src="https://picsum.photos/800/801/?random" alt="1" />
     },
     {
-      id: 2,
-      name: "JANE DOE",
-      image: Image2,
-      category: "MENTOR",
-      description: "Senior software engineer with over 10 years of experience in full-stack development. Specializing in React, Node.js, and cloud architecture. Known for mentoring junior developers and leading technical teams through complex projects."
+      key: uuidv4(),
+      content: <img src="https://picsum.photos/800/802/?random" alt="2" />
     },
     {
-      id: 3,
-      name: "JANE DOE",
-      image: Image3,
-      category: "MENTOR",
-      description: "Senior software engineer with over 10 years of experience in full-stack development. Specializing in React, Node.js, and cloud architecture. Known for mentoring junior developers and leading technical teams through complex projects."
+      key: uuidv4(),
+      content: <img src="https://picsum.photos/600/803/?random" alt="3" />
+    },
+    {
+      key: uuidv4(),
+      content: <img src="https://picsum.photos/800/500/?random" alt="4" />
+    },
+    {
+      key: uuidv4(),
+      content: <img src="https://picsum.photos/800/804/?random" alt="5" />
+    },
+    {
+      key: uuidv4(),
+      content: <img src="https://picsum.photos/500/800/?random" alt="6" />
+    },
+    {
+      key: uuidv4(),
+      content: <img src="https://picsum.photos/800/600/?random" alt="7" />
+    },
+    {
+      key: uuidv4(),
+      content: <img src="https://picsum.photos/805/800/?random" alt="8" />
     }
-  ];
+  ].map((slide, index) => {
+    return { ...slide, onClick: () => this.setState({ goToSlide: index }) };
+  });
 
-  const mentor = id ? characters.find(char => char.id === Number(id)) : null;
+  onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      [e.target.name]: parseInt(e.target.value, 10) || 0,
+    });
+  };
 
-  // Use ref and effect for handling wheel scroll transition
-  const contentRef = useRef<HTMLDivElement>(null);
+  handleTouchStart = (evt: React.TouchEvent<HTMLDivElement>) => {
+    if (!this.state.enableSwipe) {
+      return;
+    }
 
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      if (contentRef.current) {
-        contentRef.current.classList.add('transitioning');
-        setTimeout(() => {
-          contentRef.current?.classList.remove('transitioning');
-        }, 800);
+    const firstTouch = evt.touches[0];
+    this.setState({
+      ...this.state,
+      xDown: firstTouch.clientX,
+      yDown: firstTouch.clientY
+    });
+  };
+
+  handleTouchMove = (evt: React.TouchEvent) => {
+    if (!this.state.enableSwipe || (!this.state.xDown === null && !this.state.yDown)) {
+      return;
+    }
+
+    let xUp = evt.touches[0].clientX;
+    let yUp = evt.touches[0].clientY;
+
+    let xDiff = this.state.xDown - xUp;
+    let yDiff = this.state.yDown - yUp;
+    if (Math.abs(xDiff) > Math.abs(yDiff)) {
+      if (xDiff > 0) {
+        /* left swipe */
+        this.setState({
+          goToSlide: this.state.goToSlide + 1,
+          xDown: null,
+          yDown: null
+        });
+      } else {
+        /* right swipe */
+        this.setState({
+          goToSlide: this.state.goToSlide - 1,
+          xDown: null,
+          yDown: null
+        });
       }
-    };
+    }
+  };
 
-    window.addEventListener('wheel', handleWheel);
-    return () => window.removeEventListener('wheel', handleWheel);
-  }, []);
-
-  if (!mentor) {
+  render() {
+    const {slideDetails, goToSlide} = this.state;
     return (
-      <div className="not-found">
-        <p>Mentor not found</p>
-      </div>
-    );
-  }
+      <div
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", height: "500px", margin: "0 auto" }}
+        onTouchStart={this.handleTouchStart}
+        onTouchMove={this.handleTouchMove}
+      >
+        <Carousel
+          slides={this.slides}
+          goToSlide={this.state.goToSlide}
+          offsetRadius={this.state.offsetRadius}
+          showNavigation={this.state.showNavigation}
+          animationConfig={this.state.config}
+        />
+        <div
+          style={{
+            margin: "0 auto",
+            padding: "1rem",
+            width: "90%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems:"center"
+          }}
+        >
+          <div style={{padding: "2rem", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", borderLeft: "2px solid #ddd"}}></div>
+          <h2> {slideDetails[goToSlide]?.title}</h2>
+          <p>{slideDetails[goToSlide]?.description}</p>
 
-  return (
-    <div className="page-container">
-      <nav className="navigation">
-        <Link to="/" className="home-link">
-          Home
-        </Link>
-      </nav>
-
-      <div className="main-content">
-        <div ref={contentRef} className="content-grid">
-          <div className="image-container">
-            <img
-              src={mentor.image}
-              alt={mentor.name}
-              className="mentor-image"
+          {/*Close Button*/}
+          <button style={{
+              padding: "10px 20px",
+              backgroundColor: "#ff5c5c",
+              color: "#fff",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              marginTop: "1rem",
+            }} onClick={() => this.setState({ goToSlide:0})}>Close</button>
+          <div>
+            <label>Go to slide: </label>
+            <input name="goToSlide" onChange={this.onChangeInput} placeholder="Enter slide Number" />
+          </div>
+          <div>
+            <label>Offset Radius: </label>
+            <input name="offsetRadius" onChange={this.onChangeInput} placeholder="Offset Radius"/>
+          </div>
+          <div>
+            <label>Show navigation: </label>
+            <input
+              type="checkbox"
+              checked={this.state.showNavigation}
+              name="showNavigation"
+              onChange={(e) => {
+                this.setState({ showNavigation: e.target.checked });
+              }}
+              placeholder="Navigation"
             />
+          </div>
+          <div>
+            <label>Enable swipe: </label>
+            <input
+              type="checkbox"
+              checked={this.state.enableSwipe}
+              name="enableSwipe"
+              onChange={(e) => {
+                this.setState({ enableSwipe: e.target.checked });
+              }}
+              placeholder="Enable Swipe"
+            />
+          </div>
+          <div>
             <button
-              type="button"
-              className="close-button"
-              title="Close"
-              aria-label="Close"
+              onClick={() => {
+                this.setState({ config: config.gentle });
+              }}
+              disabled={this.state.config === config.gentle}
             >
-              <X size={24} />
+              Gentle Transition
             </button>
           </div>
-
-          <div className="content-section">
-            <div className="red-line"></div>
-            
-            <h2 className="category-title">
-              {mentor.category}
-            </h2>
-
-            <h1 className="mentor-name">
-              {mentor.name}
-            </h1>
-
-            <p className="mentor-description">
-              {mentor.description}
-            </p>
-
-            <div className="social-links">
-              <a href="#" className="social-link">
-                <Twitter size={24} />
-              </a>
-              <a href="#" className="social-link">
-                <Github size={24} />
-              </a>
-              <a href="#" className="social-link">
-                <Linkedin size={24} />
-              </a>
-            </div>
+          <div>
+            <button
+              onClick={() => {
+                this.setState({ config: config.slow });
+              }}
+              disabled={this.state.config === config.slow}
+            >
+              Slow Transition
+            </button>
+          </div>
+          <div>
+            <button
+              onClick={() => {
+                this.setState({ config: config.wobbly });
+              }}
+              disabled={this.state.config === config.wobbly}
+            >
+              Wobbly Transition
+            </button>
+          </div>
+          <div>
+            <button
+              onClick={() => {
+                this.setState({ config: config.stiff });
+              }}
+              disabled={this.state.config === config.stiff}
+            >
+              Stiff Transition
+            </button>
           </div>
         </div>
       </div>
-
-      <div className="footer">
-        Portfolio 2024 - React | TypeScript | Tailwind
-      </div>
-    </div>
-  );
-};
-
-export default MentorDetails;
+    );
+  }
+}
