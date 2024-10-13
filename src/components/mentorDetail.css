@@ -1,0 +1,73 @@
+
+const styles: Record<string, CSSProperties> = {
+    container: {
+      display: "flex",
+      flexDirection: 'column',
+      height: "100vh",
+      margin: "0 auto",
+      color: 'white',
+      fontFamily: "Arial, sans-serif",
+      backgroundColor: '#1a1f3c',
+      overflow: 'hidden',
+    },
+    nav: {
+      padding: "1rem 2rem",
+    },
+    navItem: {
+      color: "rgba(255, 255, 255, 0.5)",
+      fontSize: '16px'
+    },
+    content: {
+      display: 'flex',
+      flex: 1,
+    },
+    carouselSection: {
+      width: '50%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    carouselImage: {
+      width: '100%',
+      height: 'auto',
+      objectFit: 'cover',
+    },
+    infoSection: {
+      width: '50%',
+      padding: '2rem',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+    },
+    avengersLabel: {
+      color: "#ff0000",
+      fontSize: "1rem",
+      fontWeight: "bold",
+      marginBottom: "0.5rem",
+    },
+    characterName: {
+      fontSize: "5rem",
+      fontWeight: "bold",
+      margin: "0.5rem 0",
+    },
+    characterDescription: {
+      fontSize: "1rem",
+      lineHeight: 1.5,
+      marginBottom: "2rem",
+    },
+    closeButton: {
+      position: "absolute",
+      top: "20px",
+      right: "20px",
+      backgroundColor: "transparent",
+      border: "1px solid white",
+      borderRadius: "50%",
+      width: "40px",
+      height: "40px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer",
+      color: "white",
+      fontSize: "1rem",
+    },
