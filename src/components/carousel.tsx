@@ -24,11 +24,13 @@ const Carousel: React.FC<CarouselProps> = ({ characters }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const baseVelocity = -0.07;
   const [isDragging, setIsDragging] = React.useState(false);
-
   const smoothVelocity = useSpring(0, {
     damping: 50,
     stiffness: 400
   });
+
+  // Create an array that duplicates characters for continuous scrolling
+  const duplicatedCharacters = [...characters, ...characters, ...characters];
 
   useEffect(() => {
     let timeoutId: number;
@@ -38,6 +40,7 @@ const Carousel: React.FC<CarouselProps> = ({ characters }) => {
       const moveBy = baseVelocity * 15;
       const containerWidth = containerRef.current?.scrollWidth || 0;
 
+      // Reset position when it reaches the end of the duplicate
       if (currentX <= -containerWidth / 2) {
         x.set(0);
       } else {
@@ -108,14 +111,10 @@ const Carousel: React.FC<CarouselProps> = ({ characters }) => {
             smoothVelocity.set(baseVelocity * 15);
           }}
         >
-          {[...characters, ...characters, ...characters].map((character, index) => (
+          {duplicatedCharacters.map((character, index) => (
             <CharacterCard key={`${character.id}-${index}`} character={character} />
           ))}
         </motion.div>
-      </div>
-
-      <div className="social-links">
-        {/* Social links remain the same */}
       </div>
     </div>
   );
